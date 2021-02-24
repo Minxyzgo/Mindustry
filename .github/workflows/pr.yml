@@ -1,21 +1,47 @@
-name: Pull Request Tests
+name: Tests
 
-on: [pull_request]
+on: [push]
 
 jobs:
-  buildJava14:
+
+  buildJava8:
+
     runs-on: ubuntu-latest
 
     steps:
+
     - uses: actions/checkout@v2
-    - name: Set up JDK 14
+
+    
+
+    - name: Set up PATH
+
+      run: echo "${ANDROID_HOME}/build-tools/30.0.1" >> $GITHUB_PATH
+
+    - name: Set up JDK
+
       uses: actions/setup-java@v1
+
       with:
+
         java-version: 14
-    - name: Run unit tests and build JAR
-      run: ./gradlew test desktop:dist
-    - name: Upload desktop JAR for testing
+
+        
+
+    - name: Grant execute permission for gradlew
+
+      run: chmod +x gradlew
+
+    - name: Build debug android apk
+
+      run: ./gradlew android:assembleDebug
+
+    - name: Upload android apk for testing
+
       uses: actions/upload-artifact@v2
+
       with:
-        name: Desktop JAR (zipped)
-        path: desktop/build/libs/Mindustry.jar
+
+        name: Android Apk (zipped)
+
+        path: android/build/outputs/apk
